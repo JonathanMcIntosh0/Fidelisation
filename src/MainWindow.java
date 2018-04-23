@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -10,11 +12,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainWindow extends Application {
+    private static final String TITRE = "Fidélisation";
 
     private final TextField tfFirstName = new TextField();
     private final TextField tfLastName = new TextField();
@@ -22,7 +26,7 @@ public class MainWindow extends Application {
     private String lastName;
 
     private final TextField[] tfSemaines = new TextField[4];
-    private String[] txtSemaines = new String[4];
+    private final String[] txtSemaines = new String[4];
 
     private final List<Client> clientList = new ArrayList<>();
 
@@ -33,55 +37,64 @@ public class MainWindow extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(@NotNull Stage primaryStage) {
+        primaryStage.setTitle(TITRE);
+
         clientList.add(new Client("Jaime", "Voyager", new int[]{330, 1700, 1500, 220}));
         clientList.add(new Client("Paul", "Avion", new int[]{750, 1700, 1500, 800}));
 
-        primaryStage.setTitle("Fidélisation");
-
-        Scene scene = new Scene(createMainLayout(), 450, 500);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(createMainLayout(), 450, 500));
 
         showClients();
         primaryStage.show();
     }
 
+    @NotNull
     private VBox createMainLayout() {
-        VBox mainLayout = new VBox(15);
-        mainLayout.setPadding(new Insets(10, 10, 10, 10));
-
-        mainLayout.getChildren().addAll(
+        VBox mainLayout = new VBox(
                 createMainTitle(),
                 createNameLayout(),
                 createMiddleLayout(),
                 createDisplayLayout()
         );
 
+        mainLayout.setAlignment(Pos.CENTER);
+        mainLayout.setSpacing(15);
+        mainLayout.setPadding(new Insets(10));
+
         return mainLayout;
     }
 
-    private StackPane createMainTitle() {
+    @NotNull
+    private Node createMainTitle() {
         Text mainTitle = new Text("Les milles de récompense");
         mainTitle.setFont(Font.font(null, FontWeight.BOLD, 20));
 
-        return new StackPane(mainTitle);
+        return mainTitle;
     }
 
-    private HBox createNameLayout() {
-        return new HBox(8, new Text("Prénom : "), tfFirstName, new Text("Nom : "), tfLastName);
+    private Node createNameLayout() {
+        return new HBox(8,
+                new Text("Prénom : "),
+                tfFirstName,
+                new Text("Nom : "),
+                tfLastName
+        );
     }
 
-    private BorderPane createMiddleLayout() {
+    @NotNull
+    private Node createMiddleLayout() {
         BorderPane borderPane = new BorderPane();
 
         borderPane.setTop(new Text("Points obtenus :"));
         borderPane.setLeft(createSemaineLayout());
-        borderPane.setRight(createButtonLayout());
+        borderPane.setCenter(createButtonLayout());
 
         return borderPane;
     }
 
-    private ScrollPane createDisplayLayout() {
+    @NotNull
+    private Node createDisplayLayout() {
         ScrollPane spDisplayLayout = new ScrollPane();
         spDisplayLayout.setPrefHeight(250);
         spDisplayLayout.setContent(displayContent);
@@ -90,7 +103,8 @@ public class MainWindow extends Application {
         return spDisplayLayout;
     }
 
-    private GridPane createSemaineLayout() {
+    @NotNull
+    private Node createSemaineLayout() {
         GridPane gridPane = new GridPane();
         gridPane.setStyle("-fx-border-color: black;");
         gridPane.setPadding(new Insets(5, 5, 5, 5));
@@ -105,7 +119,7 @@ public class MainWindow extends Application {
         return gridPane;
     }
 
-    private VBox createButtonLayout() {
+    private Node createButtonLayout() {
         Button btnAddClient = new Button("Ajouter un adhérent");
         btnAddClient.setOnAction(event -> addClient());
 
@@ -132,7 +146,7 @@ public class MainWindow extends Application {
         if (checkValidName()) {
             Client client = getClient();
             if (client != null) {
-                AlertBox.displayAlreadyExists(client.getNameTag());
+                AlertBoxCreator.displayAlreadyExists(client.getNameTag());
                 return;
             }
 
@@ -142,7 +156,7 @@ public class MainWindow extends Application {
 
                 Client newClient = new Client(firstName, lastName, milles);
                 clientList.add(newClient);
-                AlertBox.displayAdd(newClient.getNameTag());
+                AlertBoxCreator.displayAdd(newClient.getNameTag());
 
                 showClients();
             }
@@ -157,12 +171,12 @@ public class MainWindow extends Application {
             Client client = getClient();
 
             if (client == null) {
-                AlertBox.displayNotFound(Client.createNameTag(firstName, lastName));
+                AlertBoxCreator.displayNotFound(Client.createNameTag(firstName, lastName));
                 return;
             }
 
             clientList.remove(client);
-            AlertBox.displayDel(client.getNameTag());
+            AlertBoxCreator.displayDel(client.getNameTag());
 
             showClients();
         }
@@ -182,14 +196,14 @@ public class MainWindow extends Application {
                 displayContent.getChildren().clear();
                 displayContent.getChildren().add(new Text(client.getMilleTag()));
             } else {
-                AlertBox.displayNotFound(Client.createNameTag(firstName, lastName));
+                AlertBoxCreator.displayNotFound(Client.createNameTag(firstName, lastName));
             }
         }
     }
 
     private boolean checkValidName() {
         if (firstName.isEmpty() || firstName.contains(" ") || lastName.isEmpty() || lastName.contains(" ")) {
-            AlertBox.displayInvalidName();
+            AlertBoxCreator.displayInvalidName();
             return false;
         }
         return true;
@@ -208,7 +222,7 @@ public class MainWindow extends Application {
             if (n < 0) valide = false;
 
             if (!valide) {
-                AlertBox.displayInvalidMilles(i + 1);
+                AlertBoxCreator.displayInvalidMilles(i + 1);
                 return false;
             }
         }

@@ -1,18 +1,21 @@
+import org.jetbrains.annotations.NotNull;
+
 class Client {
-    private final String firstName;
-    private final String lastName;
+    private Name name;
 
     private final int[] milles;
     private final int totalMilles;
     private final int extraMilles;
 
+    @NotNull
     private final String clientTag;
+    @NotNull
     private final String milleTag;
+    @NotNull
     private final String nameTag;
 
-    public Client(String firstName, String lastName, int[] milles) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    Client(@NotNull Name name, int[] milles) {
+        this.name = name;
         this.milles = milles;
 
         this.clientTag = createClientTag();
@@ -24,23 +27,19 @@ class Client {
         this.nameTag = createNameTag();
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Name getName() {
+        return name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getClientTag() {
+    @NotNull String getClientTag() {
         return clientTag;
     }
 
-    public String getMilleTag() {
+    @NotNull String getMilleTag() {
         return milleTag;
     }
 
-    public String getNameTag() {
+    @NotNull String getNameTag() {
         return nameTag;
     }
 
@@ -56,23 +55,24 @@ class Client {
         return extraMilles;
     }
 
+    @NotNull
     private String createClientTag() {
-        String clientTag = firstName + " " + lastName + " :";
+        String clientTag = name.firstName + " " + name.lastName + " :";
         for (int mille : milles) clientTag = clientTag.concat(" " + mille);
 
         return clientTag;
     }
 
     private String createMilleTag() {
-        return firstName + " " + lastName + " a accumulé " + (totalMilles + extraMilles) + ".\n" +
+        return name.firstName + " " + name.lastName + " a accumulé " + (totalMilles + extraMilles) + ".\n" +
                 "Il a obtenue " + extraMilles + " mille(s) en prime.";
     }
 
     private String createNameTag() {
-        return "Le client " + firstName + " " + lastName;
+        return "Le client " + name.firstName + " " + name.lastName;
     }
 
-    public static String createNameTag(String firstName, String lastName) {
+    static String createNameTag(String firstName, String lastName) {
         return "Le client " + firstName + " " + lastName;
     }
 }
