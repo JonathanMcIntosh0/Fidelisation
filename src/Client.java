@@ -11,23 +11,20 @@ class Client {
     private final String clientTag;
     @NotNull
     private final String milleTag;
-    @NotNull
-    private final String nameTag;
 
     Client(@NotNull Name name, int[] milles) {
         this.name = name;
-        this.milles = milles;
 
+        this.milles = milles;
         this.clientTag = createClientTag();
 
         this.totalMilles = getTotalMilles();
         this.extraMilles = getExtraMilles();
         this.milleTag = createMilleTag();
 
-        this.nameTag = createNameTag();
     }
 
-    public Name getName() {
+    Name getName() {
         return name;
     }
 
@@ -37,10 +34,6 @@ class Client {
 
     @NotNull String getMilleTag() {
         return milleTag;
-    }
-
-    @NotNull String getNameTag() {
-        return nameTag;
     }
 
     private int getTotalMilles() {
@@ -66,13 +59,5 @@ class Client {
     private String createMilleTag() {
         return name.firstName + " " + name.lastName + " a accumulé " + (totalMilles + extraMilles) + ".\n" +
                 "Il a obtenue " + extraMilles + " mille(s) en prime.";
-    }
-
-    private String createNameTag() {
-        return "Le client " + name.firstName + " " + name.lastName;
-    }
-
-    static String createNameTag(String firstName, String lastName) {
-        return "Le client " + firstName + " " + lastName;
     }
 }

@@ -14,23 +14,25 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainWindow extends Application {
-    private static final String TITRE = "Fidélisation";
+    private static final String WINDOW_TITLE = "Fidélisation";
+    private static final int SCENE_HEIGHT = 500;
+    private static final int SCENE_WIDTH = 450;
 
     private final TextField tfFirstName = new TextField();
     private final TextField tfLastName = new TextField();
-    private String firstName;
-    private String lastName;
 
     private final TextField[] tfSemaines = new TextField[4];
-    private final String[] txtSemaines = new String[4];
-
-    private final List<Client> clientList = new ArrayList<>();
 
     private final VBox displayContent = new VBox(5);
+
+    private Database database = new Database(
+            tfFirstName,
+            tfLastName,
+            tfSemaines,
+            displayContent
+    );
+
 
     public static void main(String[] args) {
         launch(args);
@@ -38,14 +40,12 @@ public class MainWindow extends Application {
 
     @Override
     public void start(@NotNull Stage primaryStage) {
-        primaryStage.setTitle(TITRE);
+        primaryStage.setTitle(WINDOW_TITLE);
+        primaryStage.setScene(new Scene(createMainLayout(), SCENE_WIDTH, SCENE_HEIGHT));
 
-        clientList.add(new Client("Jaime", "Voyager", new int[]{330, 1700, 1500, 220}));
-        clientList.add(new Client("Paul", "Avion", new int[]{750, 1700, 1500, 800}));
+        database.addDefaultClients();
+        database.showClients();
 
-        primaryStage.setScene(new Scene(createMainLayout(), 450, 500));
-
-        showClients();
         primaryStage.show();
     }
 
@@ -121,129 +121,21 @@ public class MainWindow extends Application {
 
     private Node createButtonLayout() {
         Button btnAddClient = new Button("Ajouter un adhérent");
-        btnAddClient.setOnAction(event -> addClient());
+        btnAddClient.setOnAction(event -> database.addClient());
 
         Button btnDelClient = new Button("Supprime un adhérent");
-        btnDelClient.setOnAction(event -> delClient());
+        btnDelClient.setOnAction(event -> database.delClient());
 
         Button btnShowClients = new Button("Afficher tous les adhérents");
-        btnShowClients.setOnAction(event -> showClients());
+        btnShowClients.setOnAction(event -> database.showClients());
 
         Button btnTotalCLientMilles = new Button("Total des milles de l'adhérent");
         btnTotalCLientMilles.setTooltip(new Tooltip(
                 "Inscrire un prénom et un nom\n" +
                         "avant d'appuyer sur ce bouton"
         ));
-        btnTotalCLientMilles.setOnAction(event -> showClientMilles());
+        btnTotalCLientMilles.setOnAction(event -> database.showClientMilles());
 
         return new VBox(10, btnAddClient, btnDelClient, btnShowClients, btnTotalCLientMilles);
-    }
-
-    private void addClient() {
-        getName();
-        getSemaines();
-
-        if (checkValidName()) {
-            Client client = getClient();
-            if (client != null) {
-                AlertBoxCreator.displayAlreadyExists(client.getNameTag());
-                return;
-            }
-
-            if (checkValidSemaine()) {
-                int[] milles = new int[4];
-                for (int i = 0; i < 4; i++) milles[i] = Integer.parseInt(txtSemaines[i]);
-
-                Client newClient = new Client(firstName, lastName, milles);
-                clientList.add(newClient);
-                AlertBoxCreator.displayAdd(newClient.getNameTag());
-
-                showClients();
-            }
-        }
-    }
-
-    private void delClient() {
-        getName();
-
-        if (checkValidName()) {
-
-            Client client = getClient();
-
-            if (client == null) {
-                AlertBoxCreator.displayNotFound(Client.createNameTag(firstName, lastName));
-                return;
-            }
-
-            clientList.remove(client);
-            AlertBoxCreator.displayDel(client.getNameTag());
-
-            showClients();
-        }
-    }
-
-    private void showClients() {
-        displayContent.getChildren().clear();
-        for (Client client : clientList) displayContent.getChildren().add(new Text(client.getClientTag()));
-    }
-
-    private void showClientMilles() {
-        getName();
-
-        if (checkValidName()) {
-            Client client = getClient();
-            if (client != null) {
-                displayContent.getChildren().clear();
-                displayContent.getChildren().add(new Text(client.getMilleTag()));
-            } else {
-                AlertBoxCreator.displayNotFound(Client.createNameTag(firstName, lastName));
-            }
-        }
-    }
-
-    private boolean checkValidName() {
-        if (firstName.isEmpty() || firstName.contains(" ") || lastName.isEmpty() || lastName.contains(" ")) {
-            AlertBoxCreator.displayInvalidName();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkValidSemaine() {
-        boolean valide = true;
-        for (int i = 0; i < 4; i++) {
-            int n = 0;
-
-            try {
-                n = Integer.parseInt(txtSemaines[i]);
-            } catch (NumberFormatException e) {
-                valide = false;
-            }
-            if (n < 0) valide = false;
-
-            if (!valide) {
-                AlertBoxCreator.displayInvalidMilles(i + 1);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Client getClient() {
-        for (Client client : clientList) {
-            if (client.getFirstName().equals(firstName) && client.getLastName().equals(lastName)) {
-                return client;
-            }
-        }
-        return null;
-    }
-
-    private void getName() {
-        firstName = tfFirstName.getText();
-        lastName = tfLastName.getText();
-    }
-
-    private void getSemaines() {
-        for (int i = 0; i < 4; i++) txtSemaines[i] = tfSemaines[i].getText();
     }
 }
