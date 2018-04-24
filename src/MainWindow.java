@@ -26,12 +26,13 @@ public class MainWindow extends Application {
 
     private final VBox displayContent = new VBox(5);
 
-    private Database database = new Database(
+    private Controller controller = new Controller(
             tfFirstName,
             tfLastName,
             tfSemaines,
             displayContent
     );
+    private Database database = new Database(controller);
 
 
     public static void main(String[] args) {

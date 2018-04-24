@@ -1,5 +1,3 @@
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -9,22 +7,29 @@ class Database {
 
     private final List<Client> clientList = new ArrayList<>();
 
-    private final TextField tfFirstName;
-    private final TextField tfLastName;
-    private final TextField[] tfSemaines;
+    Controller controller;
 
-    private final VBox displayContent;
+    Database(Controller controller) {
+        this.controller = controller;
+    }
 
-    Database(TextField tfFirstName, TextField tfLastName, TextField[] tfSemaines, VBox displayContent) {
-        this.tfFirstName = tfFirstName;
-        this.tfLastName = tfLastName;
-        this.tfSemaines = tfSemaines;
-        this.displayContent = displayContent;
+    void showClientMilles() {
+        Name name = controller.getName();
+
+        if (checkValidName(name)) {
+            Client client = getClient(name);
+            if (client != null) {
+                controller.clearDisplay();
+                controller.addToDisplay(new Text(client.getMilleTag()));
+            } else {
+                AlertBoxCreator.displayNotFound(name);
+            }
+        }
     }
 
     void addClient(){
-        Name name = getName();
-        String[] strMilles = getStrMilles();
+        Name name = controller.getName();
+        String[] strMilles = controller.getStrMilles();
 
         if (checkValidName(name)) {
             Client client = getClient(name);
@@ -47,7 +52,7 @@ class Database {
     }
 
     void delClient() {
-        Name name = getName();
+        Name name = controller.getName();
 
         if (checkValidName(name)) {
 
@@ -65,33 +70,9 @@ class Database {
         }
     }
 
-    void showClientMilles() {
-        Name name = getName();
-
-        if (checkValidName(name)) {
-            Client client = getClient(name);
-            if (client != null) {
-                displayContent.getChildren().clear();
-                displayContent.getChildren().add(new Text(client.getMilleTag()));
-            } else {
-                AlertBoxCreator.displayNotFound(name);
-            }
-        }
-    }
-
     void showClients() {
-        displayContent.getChildren().clear();
-        for (Client client : clientList) displayContent.getChildren().add(new Text(client.getClientTag()));
-    }
-
-    private Name getName() {
-        return new Name(tfFirstName.getText(), tfLastName.getText());
-    }
-
-    private String[] getStrMilles() {
-        String[] strMiles = new String[4];
-        for (int i = 0; i < 4; i++) strMiles[i] = tfSemaines[i].getText();
-        return strMiles;
+        controller.clearDisplay();
+        for (Client client : clientList) controller.addToDisplay(new Text(client.getClientTag()));
     }
 
     private Client getClient(Name name) {

@@ -1,3 +1,4 @@
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -14,6 +15,8 @@ class AlertBox {
         window.setTitle(title);
 
         StackPane layout = new StackPane(new Text(message));
+        layout.setPadding(new Insets(8));
+
         window.setScene(new Scene(layout));
 
         window.showAndWait();

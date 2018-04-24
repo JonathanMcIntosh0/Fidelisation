@@ -6,4 +6,12 @@ public class Name {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+
+    String getNameTag() {
+        return "Le client " + firstName + " " + lastName;
+    }
+
+    boolean equals(Name name) {
+        return name.firstName.equals(firstName) && name.lastName.equals(lastName);
+    }
 }

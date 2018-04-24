@@ -1,25 +1,25 @@
 class AlertBoxCreator {
-    static void displayNotFound(String nameTag) {
+    static void displayNotFound(Name name) {
         String title = "Erreur";
-        String message = nameTag + " n'existe pas!";
+        String message = name.getNameTag() + " n'existe pas!";
         new AlertBox(title, message);
     }
 
-    static void displayDel(String nameTag) {
+    static void displayDel(Name name) {
         String title = "Client suprimer";
-        String message = nameTag + " a été supprimer!";
+        String message = name.getNameTag() + " a été supprimer!";
         new AlertBox(title, message);
     }
 
-    static void displayAdd(String nameTag) {
+    static void displayAdd(Name name) {
         String title = "Client ajouter";
-        String message = nameTag + " a été ajouter!";
+        String message = name.getNameTag() + " a été ajouter!";
         new AlertBox(title, message);
     }
 
-    static void displayAlreadyExists(String nameTag) {
+    static void displayAlreadyExists(Name name) {
         String title = "Erreur";
-        String message = nameTag + " existe déja!";
+        String message = name.getNameTag() + " existe déja!";
         new AlertBox(title, message);
     }
 
